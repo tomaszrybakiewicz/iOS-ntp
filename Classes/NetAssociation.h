@@ -71,6 +71,7 @@ struct ntpShortTime {
 
 @property (readonly) BOOL               trusty;             // is this clock trustworthy
 @property (readonly) double             offset;             // offset from device time (secs)
+@property (assign, nonatomic) BOOL alwaysTrust;
 
 - (id) init:(NSString *) serverName;
 - (void) enable;

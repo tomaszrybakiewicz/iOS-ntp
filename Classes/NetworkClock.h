@@ -15,25 +15,13 @@
   ┃ early estimate and then refine that and reduce the number of notifications ...                   ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
 
-@interface NetworkClock : NSObject {
+@interface NetworkClock : NSObject
 
-    NSTimeInterval          timeIntervalSinceDeviceTime;
++ (instancetype)sharedInstance;
 
-    NSMutableArray *        timeAssociations;
+- (id)initWithNTPHostsFile:(NSString*)filePath;
 
-@private
-    
-    NSSortDescriptor *      dispersionSortDescriptor;
-    NSArray *               sortDescriptors;
-    
-}
-
-+ (NetworkClock *) sharedInstance;
-
-- (void) createAssociations;
-- (void) reportAssociations;
-- (void) finishAssociations;
-
-- (NSDate *) networkTime;
+- (NSDate *)networkTime;
+- (void)finishAssociations;
 
 @end

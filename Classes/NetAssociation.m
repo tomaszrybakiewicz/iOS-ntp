@@ -62,6 +62,7 @@ static double ntpDiffSeconds(struct ntpTimestamp * start, struct ntpTimestamp * 
     pollingIntervalIndex = 4;
     _trusty = FALSE;                                         // don't trust this clock to start with ...
     _offset = 0.0;                                           // start with clock on time (no offset)
+    self.alwaysTrust = NO;
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ Create a UDP socket that will communicate with the time server and set its delegate ...          │
   └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
@@ -209,10 +210,10 @@ static double ntpDiffSeconds(struct ntpTimestamp * start, struct ntpTimestamp * 
             none++;
             continue;
         }
-        if (fabs(fifoQueue[i]) < 1E-6) {                    // server can't be trusted
+        
+        if (!self.alwaysTrust && fabs(fifoQueue[i]) < 1E-6) {                    // server can't be trusted
             fail++;
-        }
-        else {
+        } else {
             good++;
             _offset += fifoQueue[i];
         }
