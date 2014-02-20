@@ -6,6 +6,47 @@
   ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝*/
 
 #import "NetAssociation.h"
+#import "AsyncUdpSocket.h"
+#include <sys/time.h>
+
+/*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+  ┃ conversions of 'NTP Timestamp Format' fractional part to/from microseconds ...                   ┃
+  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
+#define uSec2Frac(x)    ( 4294*(x) + ( (1981*(x))>>11 ) )
+#define Frac2uSec(x)    ( ((x) >> 12) - 759 * ( ( ((x) >> 10) + 32768 ) >> 16 ) )
+
+#define JAN_1970        0x83aa7e80      /* 1970 - 1900 in seconds 2,208,988,800 | First day UNIX  */
+// 1 Jan 1972 : 2,272,060,800 | First day UTC
+
+/*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │  NTP Timestamp Structure                                                                         │
+  │                                                                                                  │
+  │   1                   2                   3                                                      │
+  │   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1                                │
+  │  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               │
+  │  |                           Seconds                             |                               │
+  │  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               │
+  │  |                  Seconds Fraction (0-padded)                  | <-- 4294967296 = 1 second     │
+  │  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               │
+  └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
+struct ntpTimestamp {
+	uint32_t    fullSeconds;
+	uint32_t    partSeconds;
+};
+
+/*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │  NTP Short Format Structure                                                                      │
+  │                                                                                                  │
+  │   0                   1                   2                   3                                  │
+  │   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1                                │
+  │  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               │
+  │  |          Seconds              |           Fraction            | <-- 65536 = 1 second          │
+  │  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               │
+  └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
+struct ntpShortTime {
+	uint16_t    fullSeconds;
+	uint16_t    partSeconds;
+};
 
 static double pollIntervals[18] = {
       16.0,    16.0,    16.0,    16.0,    16.0,     35.0,
@@ -13,7 +54,57 @@ static double pollIntervals[18] = {
     4096.0,  8192.0, 16384.0, 32768.0, 65536.0, 131072.0
 };
 
-#define firstPollIntervalIndex (4)                // pollIntervals[4] = 16 seconds
+static double ntpDiffSeconds(struct ntpTimestamp * start, struct ntpTimestamp * stop);
+
+#define firstPollIntervalIndex (4) // pollIntervals[4] = 16 seconds
+
+@interface NetAssociation () {
+    
+    AsyncUdpSocket *socket; // NetAssociation UDP Socket
+    NSString *server; // server name "123.45.67.89"
+    
+    NSTimer *repeatingTimer; // fires off an ntp request ...
+    int pollingIntervalIndex;  // index into polling interval table
+    
+    struct ntpTimestamp ntpClientSendTime;
+    struct ntpTimestamp ntpServerRecvTime;
+    struct ntpTimestamp ntpServerSendTime;
+    struct ntpTimestamp ntpClientRecvTime;
+    struct ntpTimestamp ntpServerBaseTime;
+    
+    // milliSeconds
+    double root_delay;
+    double dispersion;
+    
+    // seconds
+    double el_time;
+    double st_time;
+    double skew1;
+    double skew2;
+    
+    int li;
+    int vn;
+    int mode;
+    int stratum;
+    int poll;
+    int prec;
+    int refid;
+    
+    double fifoQueue[8];
+    short fifoIndex;
+}
+
+- (void) queryTimeServer:(NSTimer *) timer;     // query the association's server (fired by timer)
+
+- (NSDate *) dateFromNetworkTime:(struct ntpTimestamp *) networkTime;
+- (NSData *) createPacket;
+- (void) evaluatePacket;
+
+- (NSString *) prettyPrintPacket;
+- (NSString *) prettyPrintTimers;
+
+@end
+
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
   ┃ This object manages the communication and time calculations for one server association.          ┃
@@ -29,32 +120,17 @@ static double pollIntervals[18] = {
   ┃ various servers and reference clocks to determine the most accurate and reliable candidates to   ┃
   ┃ provide a best time.                                                                             ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-
-@interface NetAssociation (PrivateMethods)
-
-- (void) queryTimeServer:(NSTimer *) timer;     // query the association's server (fired by timer)
-
-- (NSDate *) dateFromNetworkTime:(struct ntpTimestamp *) networkTime;
-- (NSData *) createPacket;
-- (void) evaluatePacket;
-
-- (NSString *) prettyPrintPacket;
-- (NSString *) prettyPrintTimers;
-
-@end
-
-static double ntpDiffSeconds(struct ntpTimestamp * start, struct ntpTimestamp * stop);
-
-#pragma mark -
-#pragma mark                        N E T W O R K • A S S O C I A T I O N
-
 @implementation NetAssociation
+
++ (instancetype)associationWithServerIpAddress:(NSString*)serverIpAddress {
+    return [[NetAssociation alloc] initWithServerIpAddress:serverIpAddress];
+}
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
   ┃ Initialize the association with a blank socket and prepare the time transaction to happen every  ┃
   ┃ 16 seconds (initial value) ...                                                                   ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-- (id) init:(NSString *) serverName {
+- (id) initWithServerIpAddress:(NSString *)serverIpAddress {
     if ((self = [super init]) == nil) return nil;
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ Set initial/default values for instance variables ...                                            │
@@ -66,7 +142,7 @@ static double ntpDiffSeconds(struct ntpTimestamp * start, struct ntpTimestamp * 
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ Create a UDP socket that will communicate with the time server and set its delegate ...          │
   └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
-    server = serverName;
+    server = serverIpAddress;
     socket = [[AsyncUdpSocket alloc] initIPv4];
     [socket setDelegate:self];
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐

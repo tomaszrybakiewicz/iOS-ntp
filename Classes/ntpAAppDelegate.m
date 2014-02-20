@@ -12,7 +12,7 @@
 
 - (BOOL) application:(UIApplication *) app didFinishLaunchingWithOptions:(NSDictionary *) options {
 
-    [NetworkClock sharedInstance];                          // gather up the ntp servers ...
+    [NetworkClock clockNTPHostsFile:[[NSBundle mainBundle] pathForResource:@"trusted_ntp.hosts" ofType:@""]];
 
     [_window makeKeyAndVisible];
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -37,11 +37,6 @@
     netClockLabel.text = [NSString stringWithFormat:@"%@", networkTime];
     differenceLabel.text = [NSString stringWithFormat:@"%5.3f",
                             [networkTime timeIntervalSinceDate:systemTime]];
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application {
-
-    [[NetworkClock sharedInstance] finishAssociations];     // be nice and let all the servers go ...
 }
 
 @end

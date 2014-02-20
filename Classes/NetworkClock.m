@@ -6,61 +6,61 @@
   ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝*/
 
 #import "NetworkClock.h"
+#import "AsyncUdpSocket.h"
+#import "NetAssociation.h"
+
 #import <arpa/inet.h>
-
-#pragma mark -
-
-/*
-   NetworkClock is a singleton class which will provide the best estimate of the difference in time
-   between the device's system clock and the time returned by a collection of time servers.
- 
-   The method <networkTime> returns an NSDate with the network time.
-*/
 
 #define kDefaultNTPHostsFile [[NSBundle mainBundle] pathForResource:@"ntp.hosts" ofType:@""]
 
-@interface NetworkClock () {
-    NSTimeInterval timeIntervalSinceDeviceTime;
-}
+//////////////////////////////////
+// Shared Instance
 
+static NetworkClock  *sharedInstance = nil;
+
+///////////////////////////////////
+
+@interface NetworkClock ()
 @property (strong, nonatomic) NSMutableArray *timeAssociations;
 @property (strong, nonatomic) NSSortDescriptor *dispersionSortDescriptor;
 @property (strong, nonatomic) NSArray *sortDescriptors;
+@property (assign, nonatomic) NSTimeInterval timeIntervalSinceDeviceTime;
+
 @end
 
 @implementation NetworkClock
 
 + (instancetype) sharedInstance {
-    DEFINE_SHARED_INSTANCE_USING_BLOCK(^{
-        return [[self alloc] init];
-    });
+    if (nil == sharedInstance) {
+        return [NetworkClock clockNTPHostsFile:kDefaultNTPHostsFile];
+    }
+    return sharedInstance;
 }
 
-#pragma mark -
++ (void)setSharedInstance:(NetworkClock*)instance {
+    sharedInstance = instance;
+}
 
-- (id) init {
-    self = [super init];
-    if (nil == self) return nil;
-
-    [self setupSortDescriptors];
-    [self setupTimeAssociationsFromFile:kDefaultNTPHostsFile];
-	[self subscribeToAppBackgroundNotifications];
-    [self subscribeToTimeAssociationNotifications];
-    
-    return self;
++ (instancetype)clockNTPHostsFile:(NSString*)filePath {
+    return [[NetworkClock alloc] initWithNTPHostsFile:filePath];
 }
 
 - (id)initWithNTPHostsFile:(NSString*)filePath {
     self = [super init];
-    if (nil == self) return nil;
-    
-    [self setupSortDescriptors];
-    [self setupTimeAssociationsFromFile:filePath];
-	[self subscribeToAppBackgroundNotifications];
-    [self subscribeToTimeAssociationNotifications];
-
-    return nil;
+    if (self) {
+        [self setupSortDescriptors];
+        [self setupTimeAssociationsFromFile:filePath];
+        [self subscribeToAppBackgroundNotifications];
+        [self subscribeToTimeAssociationNotifications];
+        
+        if (nil == sharedInstance) {
+            [NetworkClock setSharedInstance:self];
+        }
+    }
+    return self;
 }
+
+#pragma mark - Setup methods
 
 - (void)setupSortDescriptors {
     // Prepare a sort-descriptor to sort associations based on their dispersion
@@ -76,7 +76,7 @@
     self.timeAssociations = [NSMutableArray arrayWithCapacity:48];
     for (NSString *server in [hostAddresses allKeys]) {
         NSString *ipAddress = hostAddresses[server][@"address"];
-        NetAssociation *timeAssociation = [[NetAssociation alloc] init:ipAddress];
+        NetAssociation *timeAssociation = [NetAssociation associationWithServerIpAddress:ipAddress];
         timeAssociation.alwaysTrust = [hostAddresses[server][@"alwaystrust"] boolValue];
         [self.timeAssociations addObject:timeAssociation];
         [timeAssociation enable]; // starts are randomized internally
@@ -112,7 +112,7 @@
 // Return the device clock time adjusted for the offset to network-derived UTC.  Since this could
 // be called very frequently, we recompute the average offset every 30 seconds.
 - (NSDate *) networkTime {
-    return [[NSDate date] dateByAddingTimeInterval:-timeIntervalSinceDeviceTime];
+    return [[NSDate date] dateByAddingTimeInterval:-self.timeIntervalSinceDeviceTime];
     
     //[[NSNotificationCenter defaultCenter] postNotificationName:@"net-time" object:self];
 }
@@ -224,7 +224,7 @@
 
 // be called very frequently, we recompute the average offset every 30 seconds.
 - (void) offsetAverage {
-    timeIntervalSinceDeviceTime = 0.0;
+    self.timeIntervalSinceDeviceTime = 0.0;
     
     short assocsTotal = [self.timeAssociations count];
     if (assocsTotal == 0) return;
@@ -235,22 +235,14 @@
     for (NetAssociation * timeAssociation in sortedArray) {
         if (timeAssociation.trusty) {
             usefulCount++;
-            timeIntervalSinceDeviceTime += timeAssociation.offset;
+            self.timeIntervalSinceDeviceTime += timeAssociation.offset;
         }
         if (usefulCount == 8) break;                // use 8 best dispersions
     }
     
     if (usefulCount > 0) {
-        timeIntervalSinceDeviceTime /= usefulCount;
+        self.timeIntervalSinceDeviceTime /= usefulCount;
     }
-//    //###ADDITION?
-//	if (usefulCount ==8)
-//	{
-//		//stop it for now
-//		//
-//        //		[self finishAssociations];
-//	}
-//    //###
 }
 
 #pragma mark - Application Notifications
