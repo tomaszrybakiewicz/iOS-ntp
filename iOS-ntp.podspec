@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name      = 'iOS-ntp'
-  s.version   = '0.2'
+  s.version   = '0.2.0'
   s.summary   = 'This project is a mirror of the iOS-ntp project hosted on [Google code](http://code.google.com/p/ios-ntp/) by Gavin Eadie'
   s.homepage  = 'http://code.google.com/p/ios-ntp/'
   s.author    = { 'Gavin Eadie' => '' }
