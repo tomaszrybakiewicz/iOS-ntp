@@ -1,0 +1,297 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		16E543CC18B710B3001909C3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16E543CB18B710B3001909C3 /* Foundation.framework */; };
+		16E543F618B71120001909C3 /* NetAssociation.m in Sources */ = {isa = PBXBuildFile; fileRef = 16E543F318B71120001909C3 /* NetAssociation.m */; };
+		16E543F718B71121001909C3 /* NetworkClock.m in Sources */ = {isa = PBXBuildFile; fileRef = 16E543F518B71120001909C3 /* NetworkClock.m */; };
+		16E543FF18B712A9001909C3 /* AsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 16E543FE18B712A9001909C3 /* AsyncUdpSocket.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		16E543C618B710B3001909C3 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		16E543C818B710B3001909C3 /* libiOS-ntp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libiOS-ntp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		16E543CB18B710B3001909C3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		16E543D918B710B3001909C3 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		16E543DC18B710B3001909C3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		16E543F218B71120001909C3 /* NetAssociation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetAssociation.h; sourceTree = "<group>"; };
+		16E543F318B71120001909C3 /* NetAssociation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetAssociation.m; sourceTree = "<group>"; };
+		16E543F418B71120001909C3 /* NetworkClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkClock.h; sourceTree = "<group>"; };
+		16E543F518B71120001909C3 /* NetworkClock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkClock.m; sourceTree = "<group>"; };
+		16E543FB18B711E5001909C3 /* ntpA_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ntpA_Prefix.pch; sourceTree = "<group>"; };
+		16E543FD18B712A9001909C3 /* AsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncUdpSocket.h; path = CocoaAsyncSocket/RunLoop/AsyncUdpSocket.h; sourceTree = "<group>"; };
+		16E543FE18B712A9001909C3 /* AsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AsyncUdpSocket.m; path = CocoaAsyncSocket/RunLoop/AsyncUdpSocket.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		16E543C518B710B3001909C3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				16E543CC18B710B3001909C3 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		16E543BF18B710B3001909C3 = {
+			isa = PBXGroup;
+			children = (
+				16E543F818B71139001909C3 /* Resources */,
+				16E543F118B71120001909C3 /* Code */,
+				16E543FA18B711B6001909C3 /* Vendor */,
+				16E543CA18B710B3001909C3 /* Frameworks */,
+				16E543C918B710B3001909C3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		16E543C918B710B3001909C3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				16E543C818B710B3001909C3 /* libiOS-ntp.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		16E543CA18B710B3001909C3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				16E543CB18B710B3001909C3 /* Foundation.framework */,
+				16E543D918B710B3001909C3 /* XCTest.framework */,
+				16E543DC18B710B3001909C3 /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		16E543F118B71120001909C3 /* Code */ = {
+			isa = PBXGroup;
+			children = (
+				16E543F218B71120001909C3 /* NetAssociation.h */,
+				16E543F318B71120001909C3 /* NetAssociation.m */,
+				16E543F418B71120001909C3 /* NetworkClock.h */,
+				16E543F518B71120001909C3 /* NetworkClock.m */,
+			);
+			path = Code;
+			sourceTree = "<group>";
+		};
+		16E543F818B71139001909C3 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				16E543FB18B711E5001909C3 /* ntpA_Prefix.pch */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		16E543FA18B711B6001909C3 /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+				16E543FC18B71248001909C3 /* CocoaAsyncSocket */,
+			);
+			path = Vendor;
+			sourceTree = "<group>";
+		};
+		16E543FC18B71248001909C3 /* CocoaAsyncSocket */ = {
+			isa = PBXGroup;
+			children = (
+				16E543FD18B712A9001909C3 /* AsyncUdpSocket.h */,
+				16E543FE18B712A9001909C3 /* AsyncUdpSocket.m */,
+			);
+			name = CocoaAsyncSocket;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		16E543C718B710B3001909C3 /* iOS-ntp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 16E543EB18B710B3001909C3 /* Build configuration list for PBXNativeTarget "iOS-ntp" */;
+			buildPhases = (
+				16E543C418B710B3001909C3 /* Sources */,
+				16E543C518B710B3001909C3 /* Frameworks */,
+				16E543C618B710B3001909C3 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "iOS-ntp";
+			productName = "iOS-ntp";
+			productReference = 16E543C818B710B3001909C3 /* libiOS-ntp.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		16E543C018B710B3001909C3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "Tomasz Rybakiewicz";
+			};
+			buildConfigurationList = 16E543C318B710B3001909C3 /* Build configuration list for PBXProject "iOS-ntp" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 16E543BF18B710B3001909C3;
+			productRefGroup = 16E543C918B710B3001909C3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				16E543C718B710B3001909C3 /* iOS-ntp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		16E543C418B710B3001909C3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				16E543FF18B712A9001909C3 /* AsyncUdpSocket.m in Sources */,
+				16E543F618B71120001909C3 /* NetAssociation.m in Sources */,
+				16E543F718B71121001909C3 /* NetworkClock.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		16E543E918B710B3001909C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		16E543EA18B710B3001909C3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		16E543EC18B710B3001909C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/iOS_ntp.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Resources/ntpA_Prefix.pch;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		16E543ED18B710B3001909C3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/iOS_ntp.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Resources/ntpA_Prefix.pch;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		16E543C318B710B3001909C3 /* Build configuration list for PBXProject "iOS-ntp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				16E543E918B710B3001909C3 /* Debug */,
+				16E543EA18B710B3001909C3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		16E543EB18B710B3001909C3 /* Build configuration list for PBXNativeTarget "iOS-ntp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				16E543EC18B710B3001909C3 /* Debug */,
+				16E543ED18B710B3001909C3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 16E543C018B710B3001909C3 /* Project object */;
+}

@@ -144,38 +144,3 @@ xcuserdata
 Pods/
 Podfile.lock
 
-
-####
-# UNKNOWN: recommended by others, but I can't discover what these files are
-#
-# ...none. Everything is now explained.
-
-LiberateHealth/LiberateHealth/en.lproj/AFNetworking.strings
-LiberateHealth/LiberateHealth/en.lproj/LHHomeViewController.xib.strings
-LiberateHealth/LiberateHealth/en.lproj/LHRootViewController.xib.strings
-LiberateHealth/LiberateHealth/en.lproj/Localizable.strings
-LiberateHealth/LiberateHealth/strings.zip
-LiberateHealth/LiberateHealth/strings/LH_AlbertaPatientConsent.strings
-LiberateHealth/LiberateHealth/strings/LH_Deactivate_Screen.strings
-LiberateHealth/LiberateHealth/strings/LH_ForgotPassword.strings
-LiberateHealth/LiberateHealth/strings/LH_Library_Error.strings
-LiberateHealth/LiberateHealth/strings/LH_Library_Error_Header.strings
-LiberateHealth/LiberateHealth/strings/LH_Library_Menu_Items.strings
-LiberateHealth/LiberateHealth/strings/LH_Library_Thumbnails.strings
-LiberateHealth/LiberateHealth/strings/LH_LoginSignup_Screens.strings
-LiberateHealth/LiberateHealth/strings/LH_PasswordExpiry_Screen.strings
-LiberateHealth/LiberateHealth/strings/LH_PlayVideo_Screen.strings
-LiberateHealth/LiberateHealth/strings/LH_Preview_Content.strings
-LiberateHealth/LiberateHealth/strings/LH_SaveSendOptions_Screen.strings
-LiberateHealth/LiberateHealth/strings/LH_Send_AddImageAttachmentCell.strings
-LiberateHealth/LiberateHealth/strings/LH_Send_Attachments.strings
-LiberateHealth/LiberateHealth/strings/LH_Send_ComposeSendMessage.strings
-LiberateHealth/LiberateHealth/strings/LH_Settings_AccountScreen.strings
-LiberateHealth/LiberateHealth/strings/LH_Settings_EmailMessageScreen.strings
-LiberateHealth/LiberateHealth/strings/LH_Settings_MainScreen.strings
-LiberateHealth/LiberateHealth/strings/LH_Settings_ManageProfileScreen.strings
-LiberateHealth/LiberateHealth/strings/LH_Teach_ColorPicker.strings
-LiberateHealth/LiberateHealth/strings/LH_Teach_RecordScreen.strings
-LiberateHealth/LiberateHealth/strings/LH_Unlock_Screen.strings
-LiberateHealth/LiberateHealth/strings/Miscellaneous.strings
-LiberateHealth/Localized.strings
