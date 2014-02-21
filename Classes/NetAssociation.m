@@ -476,8 +476,26 @@ static struct ntpTimestamp NTP_1970 = {JAN_1970, 0};    // network time for 1 Ja
             server, stratum, _offset *1000.0, dispersion];
 }
 
-@end
+#pragma mark - Statistics
 
+- (NSDictionary*)stats {
+    NSMutableDictionary *stats = [NSMutableDictionary dictionary];
+    
+    stats[@"leap_indicator"] = @(li);
+    stats[@"version_number:"] = @(vn);
+    stats[@"protocol_mode"] = @(mode);
+    stats[@"stratum"] = @(stratum);
+    stats[@"poll interval"] = @(poll);
+    stats[@"precision_exp"] = @(prec);
+    stats[@"root_delay"] = @(root_delay);
+    stats[@"dispersion"] = @(dispersion);
+    stats[@"reference_ID"] = [NSString stringWithFormat:@"%3u.%u.%u.%u",
+                              refid>>24&0xff, refid>>16&0xff, refid>>8&0xff, refid&0xff];
+
+    return stats;
+}
+
+@end
 
 /* ----------------------------------------------------------------------------------------------------
  NTP_Logging(@"Read SUCCESS: [%@] clock offset: %5.3fs±%5.3fmS (%5.3f,%5.3f,%5.3f))", server, offset, dispersion, (offset-offset2)*1000.0, (offset-offset3)*1000.0, (offset-offset4)*1000.0);

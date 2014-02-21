@@ -1,7 +1,7 @@
 /*╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
   ║ NetworkClock.h                                                                                   ║
   ║                                                                                                  ║
-  ║ Created by Gavin Eadie on Oct17/10                                                               ║
+  ║ Created by Gavin Eadie on Oct17/10. Updated by Tomasz Rybakiewicz on Feb20/14.                   ║
   ║ Copyright 2010 Ramsay Consulting. All rights reserved.                                           ║
   ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝*/
 
@@ -66,5 +66,15 @@
  @return The device clock time adjusted for the offset to network-derived UTC.
  */
 - (NSDate *)networkTime;
+
+
+///-----------------------------------------
+/// @name Accessing Network Clock Properties
+///-----------------------------------------
+
+/**
+ Array of all registered `NetAssociation` objects.
+ */
+@property (strong, nonatomic, readonly) NSMutableArray *timeAssociations;
 
 @end

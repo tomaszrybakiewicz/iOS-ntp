@@ -21,7 +21,7 @@ static NetworkClock  *sharedInstance = nil;
 ///////////////////////////////////
 
 @interface NetworkClock ()
-@property (strong, nonatomic) NSMutableArray *timeAssociations;
+@property (strong, nonatomic, readwrite) NSMutableArray *timeAssociations;
 @property (strong, nonatomic) NSSortDescriptor *dispersionSortDescriptor;
 @property (strong, nonatomic) NSArray *sortDescriptors;
 @property (assign, nonatomic) NSTimeInterval timeIntervalSinceDeviceTime;

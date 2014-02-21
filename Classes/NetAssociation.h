@@ -1,7 +1,7 @@
 /*╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
   ║ NetAssociation.h                                                                                 ║
   ║                                                                                                  ║
-  ║ Created by Gavin Eadie on Nov03/10                                                               ║
+  ║ Created by Gavin Eadie on Nov03/10. Updated by Tomasz Rybakiewicz on Feb20/14.                   ║
   ║ Copyright 2010 Ramsay Consulting. All rights reserved.                                           ║
   ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝*/
 
@@ -50,6 +50,19 @@
  This stops time querying. It sets query timer the fire time to the infinite future.
  */
 - (void) finish;
+
+///-------------------------------------
+/// @name Gettings Net Association Stats
+///-------------------------------------
+
+/**
+ Returns Net Association statistics.
+ 
+ Returned stats are: leap_indicator, version_number, protocol_mode, stratum, poll interval, precision_exp, root_delay, dispersion, reference_ID
+ 
+ @return NSDictionary with receiver stats.
+ */
+- (NSDictionary*)stats;
 
 ///-------------------------------------------
 /// @name Accessing Net Association Properties
