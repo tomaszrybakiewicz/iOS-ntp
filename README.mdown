@@ -28,12 +28,10 @@ pod 'iOS-ntp', :git => 'https://github.com/tomaszrybakiewicz/iOS-ntp'
 	@implementation AppDelegate
 	
 	- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-	-
 	    [NetworkClock clockWithNTPHosts:@[
 	        @"time.apple.com",
 	        @"south-america.pool.ntp.org alwaystrust"
-	    ]];
-	    
+	    ]];    
 	    return YES;
 	}
 	
