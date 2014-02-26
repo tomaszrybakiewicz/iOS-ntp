@@ -12,7 +12,13 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [NetworkClock clockNTPHostsFile:[[NSBundle mainBundle] pathForResource:@"ntp.hosts" ofType:@""]];
+    [NetworkClock clockWithNTPHostsFile:[[NSBundle mainBundle] pathForResource:@"ntp.hosts" ofType:@""]];
+    
+    // Alternatively:
+//    [NetworkClock clockWithNTPHosts:@[
+//        @"time.apple.com",
+//        @"south-america.pool.ntp.org alwaystrust"
+//    ]];
     return YES;
 }
 

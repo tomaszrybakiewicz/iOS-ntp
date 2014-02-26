@@ -241,7 +241,7 @@ static double ntpDiffSeconds(struct ntpTimestamp * start, struct ntpTimestamp * 
     struct timeval  now;
 	gettimeofday(&now, NULL);
 
-	ntpClientSendTime.fullSeconds = now.tv_sec + JAN_1970;
+	ntpClientSendTime.fullSeconds = (uint32_t) now.tv_sec + JAN_1970;
 	ntpClientSendTime.partSeconds = uSec2Frac(now.tv_usec);
 
     wireData[10] = htonl(now.tv_sec + JAN_1970);                            // Transmit Timestamp
@@ -343,7 +343,7 @@ static double ntpDiffSeconds(struct ntpTimestamp * start, struct ntpTimestamp * 
     struct timeval          arrival_time;
 	gettimeofday(&arrival_time, NULL);
 
-    ntpClientRecvTime.fullSeconds = arrival_time.tv_sec + JAN_1970;     // Transmit Timestamp coarse
+    ntpClientRecvTime.fullSeconds = (uint32_t) arrival_time.tv_sec + JAN_1970;     // Transmit Timestamp coarse
 	ntpClientRecvTime.partSeconds = uSec2Frac(arrival_time.tv_usec);    // Transmit Timestamp fine
 
     uint32_t                hostData[12];
@@ -480,7 +480,7 @@ static struct ntpTimestamp NTP_1970 = {JAN_1970, 0};    // network time for 1 Ja
 
 - (NSDictionary*)stats {
     NSMutableDictionary *stats = [NSMutableDictionary dictionary];
-    
+    stats[@"server"] = server;
     stats[@"leap_indicator"] = @(li);
     stats[@"version_number:"] = @(vn);
     stats[@"protocol_mode"] = @(mode);

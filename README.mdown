@@ -4,17 +4,84 @@ This project is a mirror of the iOS-ntp project hosted on [Google code](http://c
 
 ### Notes
 
-The structure of this project may need some cleaning up and modernisation but it is ARC compatible and runs fine on Xcode 4.6.2.
+The structure of this project may need some cleaning up and modernisation but it is ARC compatible and runs fine on Xcode 5.0.2.
 
 It probably neeeds to be worked around a newer version of Cocoa Async Socket https://github.com/mattsoftware/CocoaAsyncSocket
 
-### Running the project
 
-    git clone git://github.com/jessedc/iOS-ntp.git ios-ntp
-    cd ios-ntp
-    git submodule sync
-    git submodule update --init
-    open ntpA.xcodeproj
+### Install using CocoaPods
+
+##### Podspec
+```
+platform :ios, '6.0'
+pod 'iOS-ntp', :git => 'https://github.com/tomaszrybakiewicz/iOS-ntp'
+```
+
+### Examples
+
+
+##### AppDelegate.m
+
+	#import "AppDelegate.h"
+	#import <iOS-ntp/NetworkClock.h>
+	
+	@implementation AppDelegate
+	
+	- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+	-
+	    [NetworkClock clockWithNTPHosts:@[
+	        @"time.apple.com",
+	        @"south-america.pool.ntp.org alwaystrust"
+	    ]];
+	    
+	    return YES;
+	}
+	
+	@end
+
+##### RootViewController.m
+
+	#import "ViewController.h"
+	#import <iOS-ntp/NetworkClock.h>
+	
+	@implementation ViewController
+	
+	- (void)viewDidLoad {
+	    [super viewDidLoad];
+	    [self updateTime];
+	    [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTime) userInfo:nil repeats:YES];
+	}
+	
+	- (void)updateTime {
+	    NSDate *systemTime = [NSDate date];
+	    NSDate *networkTime = [[NetworkClock sharedInstance] networkTime];
+	    NSTimeInterval difference = [networkTime timeIntervalSinceDate:systemTime];
+	    
+	    NSLog(@"system:  %@", systemTime);
+		NSLog(@"network: %@", networkTime);
+		NSLog(@"difference: %5.3f sec", difference);
+	}
+	
+	@end
+
+
+Example iOS application can be found in Examples folder.
+
+```
+$ cd Examples/ntpDemo/
+$ pod install
+$ open ntpDemo.xcworkspace
+```
+
+### Running the library project
+
+```
+$ git clone git@github.com:tomaszrybakiewicz/iOS-ntp.git ios-ntp_git
+$ cd ios-ntp_git
+$ git submodule sync
+$ git submodule update --init
+$ open iOS-ntp.xcodeproj
+```
 
 ## Original README
 

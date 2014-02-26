@@ -32,20 +32,24 @@ static NetworkClock  *sharedInstance = nil;
 
 + (instancetype) sharedInstance {
     if (nil == sharedInstance) {
-        return [NetworkClock clockNTPHostsFile:kDefaultNTPHostsFile];
+        return [NetworkClock clockWithNTPHostsFile:kDefaultNTPHostsFile];
     }
     return sharedInstance;
 }
 
-+ (void)setSharedInstance:(NetworkClock*)instance {
++ (void)setSharedInstance:(NetworkClock *)instance {
     sharedInstance = instance;
 }
 
-+ (instancetype)clockNTPHostsFile:(NSString*)filePath {
++ (instancetype)clockWithNTPHostsFile:(NSString *)filePath {
     return [[NetworkClock alloc] initWithNTPHostsFile:filePath];
 }
 
-- (id)initWithNTPHostsFile:(NSString*)filePath {
++ (instancetype)clockWithNTPHosts:(NSArray *)ntpHosts {
+    return [[NetworkClock alloc] initWithNTPHosts:ntpHosts];
+}
+
+- (id)initWithNTPHostsFile:(NSString *)filePath {
     self = [super init];
     if (self) {
         [self setupSortDescriptors];
@@ -53,6 +57,21 @@ static NetworkClock  *sharedInstance = nil;
         [self subscribeToAppBackgroundNotifications];
         [self subscribeToTimeAssociationNotifications];
         
+        if (nil == sharedInstance) {
+            [NetworkClock setSharedInstance:self];
+        }
+    }
+    return self;
+}
+
+- (id)initWithNTPHosts:(NSArray *)ntpHosts {
+    self = [super init];
+    if (self) {
+        [self setupSortDescriptors];
+        [self setupTimeAssociationsFromArray:ntpHosts];
+        [self subscribeToAppBackgroundNotifications];
+        [self subscribeToTimeAssociationNotifications];
+
         if (nil == sharedInstance) {
             [NetworkClock setSharedInstance:self];
         }
@@ -68,9 +87,23 @@ static NetworkClock  *sharedInstance = nil;
     self.sortDescriptors = @[self.dispersionSortDescriptor];
 }
 
-- (void)setupTimeAssociationsFromFile:(NSString*)filePath {
+- (void)setupTimeAssociationsFromFile:(NSString *)filePath {
     NSArray *ntpDomains = [self loadDomainNamesFromFile:filePath];
     NSDictionary *hostAddresses = [self resolveDomainAddressesFromArray:ntpDomains];
+    
+    // start an 'association' (network clock object) for each address.
+    self.timeAssociations = [NSMutableArray arrayWithCapacity:48];
+    for (NSString *server in [hostAddresses allKeys]) {
+        NSString *ipAddress = hostAddresses[server][@"address"];
+        NetAssociation *timeAssociation = [NetAssociation associationWithServerIpAddress:ipAddress];
+        timeAssociation.alwaysTrust = [hostAddresses[server][@"alwaystrust"] boolValue];
+        [self.timeAssociations addObject:timeAssociation];
+        [timeAssociation enable]; // starts are randomized internally
+    }
+}
+
+- (void)setupTimeAssociationsFromArray:(NSArray *)ntpHosts {
+    NSDictionary *hostAddresses = [self resolveDomainAddressesFromArray:ntpHosts];
     
     // start an 'association' (network clock object) for each address.
     self.timeAssociations = [NSMutableArray arrayWithCapacity:48];
@@ -128,7 +161,7 @@ static NetworkClock  *sharedInstance = nil;
 }
 
 
-- (NSArray*)loadDomainNamesFromFile:(NSString*)filePath {
+- (NSArray *)loadDomainNamesFromFile:(NSString *)filePath {
     NSString *fileData = [[NSString alloc] initWithData:[[NSFileManager defaultManager]
                                                          contentsAtPath:filePath]
                                                encoding:NSUTF8StringEncoding];
@@ -138,7 +171,7 @@ static NetworkClock  *sharedInstance = nil;
 
 // for each NTP service domain name in the 'ntp.hosts' file : "0.pool.ntp.org" etc
 // resolve the IP address of the named host : "0.pool.ntp.org" --> [123.45.67.89], ...
-- (NSDictionary*)resolveDomainAddressesFromArray:(NSArray*)domains {
+- (NSDictionary *)resolveDomainAddressesFromArray:(NSArray *)domains {
     NSMutableDictionary *hostAddresses = [NSMutableDictionary dictionaryWithCapacity:48];
     
     for (NSString * ntpDomainName in domains) {
@@ -159,7 +192,7 @@ static NetworkClock  *sharedInstance = nil;
         }
         
         if (!CFHostStartInfoResolution (ntpHostName, kCFHostAddresses, &nameError)) {
-            LogInProduction(@"CFHostStartInfoResolution error %li", nameError.error);
+            LogInProduction(@"CFHostStartInfoResolution error %i", (int)nameError.error);
             CFRelease(ntpHostName);
             continue;                                           // couldn't start resolution ...
         }
@@ -233,7 +266,9 @@ static NetworkClock  *sharedInstance = nil;
     short usefulCount = 0;
     
     for (NetAssociation * timeAssociation in sortedArray) {
-        if (timeAssociation.trusty) {
+        BOOL isValidOffset = (timeAssociation.offset < -0.0000001 || 0.0000001 < timeAssociation.offset);
+        BOOL isTrusty = (timeAssociation.alwaysTrust && timeAssociation.trusty);
+        if (isValidOffset && isTrusty) {
             usefulCount++;
             self.timeIntervalSinceDeviceTime += timeAssociation.offset;
         }

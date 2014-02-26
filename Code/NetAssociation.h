@@ -58,7 +58,7 @@
 /**
  Returns Net Association statistics.
  
- Returned stats are: leap_indicator, version_number, protocol_mode, stratum, poll interval, precision_exp, root_delay, dispersion, reference_ID
+ Returned stats are: server, leap_indicator, version_number, protocol_mode, stratum, poll interval, precision_exp, root_delay, dispersion, reference_ID
  
  @return NSDictionary with receiver stats.
  */
